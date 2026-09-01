@@ -18,16 +18,34 @@ there is one manual rather than two that drift.
 
 ## Install
 
+One command, from anywhere:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/TOoSmOotH/agents-kit/main/get.sh | sh
+```
+
+That clones into `~/.local/share/agents-kit` and symlinks the skill into the two places that
+cover all four tools. Re-running it pulls and re-links, so it doubles as the updater. To read
+it before running it — which you should, for any `curl | sh` — download it first:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/TOoSmOotH/agents-kit/main/get.sh -o get.sh
+less get.sh && sh get.sh
+```
+
+<details>
+<summary>Or clone it yourself</summary>
+
 ```sh
 git clone https://github.com/TOoSmOotH/agents-kit.git
 cd agents-kit
 ./install.sh
 ```
 
-That symlinks `skills/init-agents/` into the two places that cover all four tools. Keep the
-clone where it is — the links point at it. Re-run `./install.sh` if you move it, and
+Keep the clone where it is — the links point at it. Re-run `./install.sh` if you move it, and
 `./install.sh --uninstall` to remove the links. Because they are symlinks, a `git pull` takes
 effect immediately with no re-install.
+</details>
 
 | Tool | Picks it up from | Invoke as |
 |---|---|---|
@@ -38,6 +56,22 @@ effect immediately with no re-install.
 
 `~/.agents/skills/` is the standard location Codex, pi, and opencode all discover. Claude Code
 does not read it, which is why it gets a second link.
+
+### Into one project, for the whole team
+
+To commit the skill so everyone who clones the repo gets it, run this **from the project root**:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/TOoSmOotH/agents-kit/main/get.sh | sh -s -- --project
+```
+
+It vendors a real copy into `.agents/skills/init-agents` and points `.claude/skills/init-agents`
+at it with a relative symlink, then tells you what to commit. No machine-wide install needed.
+
+One caveat: **pi only loads project-local skills after you trust the project.** Interactively it
+asks once and remembers; non-interactive runs (`-p`) skip untrusted project resources silently,
+so pass `--approve` there. The other three need no trust step. A generated `AGENTS.md` is read
+by pi either way — trust gates project *skills*, not context files.
 
 <details>
 <summary>Alternative: install as a plugin, with no clone</summary>
@@ -224,6 +258,7 @@ install there is no cache to clear.
 ## Layout
 
 ```
+get.sh                              one-shot fetch + install (curl | sh entry point)
 install.sh                          symlinks the skill into each tool's path
 .claude-plugin/plugin.json          plugin manifest
 .claude-plugin/marketplace.json     one-plugin marketplace, source "./"

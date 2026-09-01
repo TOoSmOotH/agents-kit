@@ -34,12 +34,15 @@ there is one manual rather than two that drift.
 ## Install
 
 ```sh
+git clone https://github.com/TOoSmOotH/agents-kit.git
+cd agents-kit
 ./install.sh
 ```
 
-That symlinks `skills/init-agents/` into the two places that cover all four harnesses. Re-run it
-after moving the repo; `./install.sh --uninstall` removes the links. Because they are symlinks,
-edits to the source are live everywhere with no re-install.
+That symlinks `skills/init-agents/` into the two places that cover all four harnesses. Keep the
+clone where it is — the links point at it. Re-run `./install.sh` if you move it, and
+`./install.sh --uninstall` to remove the links. Because they are symlinks, a `git pull` takes
+effect immediately with no re-install.
 
 | Harness | Picks it up from | Invoke as |
 |---|---|---|
@@ -51,27 +54,32 @@ edits to the source are live everywhere with no re-install.
 `~/.agents/skills/` is the standard location Codex, pi, and opencode all discover. Claude Code
 does not read it, which is why it gets a second link.
 
-### Alternative: as a Claude Code plugin
+### Alternative: as a plugin, with no clone
 
-This directory is also a one-plugin marketplace, so it can be installed the plugin way instead.
-Don't do both — Claude Code would then see the skill twice.
+The repo is also a one-plugin marketplace, so it can be installed by name instead. Don't do
+both — Claude Code would then see the skill twice.
 
-```sh
-claude plugin validate .
-```
+In Claude Code:
 
 ```
-/plugin marketplace add /home/mreeves/Projects/agents-kit
+/plugin marketplace add TOoSmOotH/agents-kit
 /plugin install agents-kit@agents-kit
 ```
 
-Codex's marketplace loader also accepts `.claude-plugin/marketplace.json`, so
-`codex plugin marketplace add .` works against the same manifest.
+Codex's marketplace loader accepts `.claude-plugin/marketplace.json` as well as its own, so the
+same manifest works there:
+
+```sh
+codex plugin marketplace add TOoSmOotH/agents-kit
+```
 
 ## Developing on it
 
+From a clone:
+
 ```sh
-claude --plugin-dir /home/mreeves/Projects/agents-kit
+claude plugin validate .
+claude --plugin-dir .
 ```
 
 Run `/reload-plugins` after editing `SKILL.md` — it is cached otherwise. Under the symlink

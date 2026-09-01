@@ -90,5 +90,24 @@ else
 fi
 
 echo
+here=""
+for h in claude codex pi opencode; do
+    have "$h" && here="$here $h"
+done
+if [ -n "$here" ]; then
+    echo "On this machine:$here will pick it up here."
+else
+    echo "No agent found on PATH here — that is fine, the paths are for whoever clones."
+fi
+echo "Both paths are installed regardless of what is on this machine, because they are"
+echo "committed for teammates whose tools differ from yours."
+
+if have pi; then
+    echo
+    echo "pi note: project-local skills load only after you trust the project. It asks once"
+    echo "         interactively; for 'pi -p' runs, pass --approve."
+fi
+
+echo
 echo "Commit both paths so the team gets the skill on clone:"
 echo "  git add .agents/skills .claude/skills"

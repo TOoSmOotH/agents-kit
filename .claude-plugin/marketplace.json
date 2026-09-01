@@ -1,0 +1,14 @@
+{
+  "name": "agents-kit",
+  "owner": {
+    "name": "Mike Reeves"
+  },
+  "description": "Tools for setting up agent-facing project documentation.",
+  "plugins": [
+    {
+      "name": "agents-kit",
+      "source": "./",
+      "description": "Generate a project's AGENTS.md operating manual and its MEMORY.md companion."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "agents-kit",
+  "description": "Generate a project's AGENTS.md operating manual and its MEMORY.md companion, splitting public knowledge from the untracked .memory/ details that can't be committed.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Mike Reeves"
+  },
+  "keywords": [
+    "agents",
+    "agents-md",
+    "onboarding",
+    "operating-manual",
+    "memory"
+  ]
+}

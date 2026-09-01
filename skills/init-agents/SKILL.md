@@ -50,10 +50,32 @@ in your own tool's private memory store, where nothing else can see it.
 
 ## Procedure
 
-### 1. Locate the repo, and don't clobber
+### 1. Fix the boundary, before you read anything
+
+Everything in these files must come from **one directory**: the project you were invoked in.
+Establish which directory that is first, because getting it wrong makes every later step
+describe the wrong software.
 
 ```sh
-git rev-parse --show-toplevel
+pwd
+git rev-parse --show-toplevel 2>/dev/null
+```
+
+- Same path — that is the root. Continue.
+- **A path above your cwd** — you are in a subdirectory of a bigger repo, or a project nested
+  inside one. `--show-toplevel` walks up, so it will hand you the parent. **Do not silently
+  adopt it.** Ask which one you are documenting, and use the answer as the root.
+- Nothing printed — not a git repo. The root is the cwd.
+
+**Then stay inside that root.** Do not read the parent directory, sibling projects, or your own
+tool's configuration in the home directory — `~/.claude/`, `~/.codex/`, `~/.config/opencode/`,
+`~/.pi/`. Those describe *you*, or somebody else's project. Folding them in is how a manual ends
+up confidently describing software that isn't there. The single exception is this skill's own
+bundled templates and references.
+
+Now, within the root:
+
+```sh
 ls AGENTS.md CLAUDE.md GEMINI.md MEMORY.md .cursorrules 2>/dev/null
 ls -d .claude .codex .pi .opencode .agents 2>/dev/null
 ```
@@ -92,7 +114,8 @@ Do not ask what you can read. Before asking a single question, gather:
 - **Layout** — top-level directories and what each is for; anything structurally surprising.
 - **Deploy/run tooling** — `docker-compose.yml`, `Dockerfile`s, `deploy/`, `scripts/`,
   helm charts, terraform.
-- **History** — `git log --oneline -30`, and the commit message format actually in use.
+- **History** — `git log --oneline -30`, and the commit message format actually in use. If the
+  repo root is above the project root, scope it: `git log --oneline -30 -- .`
 - **Existing docs** — README, `docs/`, `CONTRIBUTING.md`. Note which are stale; you will
   need this for the "Which docs to trust" section.
 
@@ -117,10 +140,9 @@ are the ones that matter:
 6. **Autonomy** — should an agent keep going between tasks, or check in? What are the
    stop-and-ask categories?
 7. **Commit and PR conventions** — subject format, sign-off/DCO, and the trailer policy
-   (whether generated-by trailers and footers are wanted). Check the current harness's global
-   instruction file first — `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`,
-   `~/.config/opencode/AGENTS.md`, or pi's settings — and if it already rules on this, restate
-   it rather than ask.
+   (whether generated-by trailers and footers are wanted). Your tool has already loaded the
+   user's global instructions into your context; if they rule on this, restate that rather than
+   ask. Do not go and read the global file to check — it describes the user, not this project.
 
 Anything the user does not know or care about: drop the section. An honestly absent section
 beats an empty scaffold.
@@ -189,3 +211,5 @@ Show the user the two files and name explicitly:
 | A 400-line first draft | Length is earned by incidents, not by the generator. |
 | Putting rationale in `AGENTS.md` | That is `MEMORY.md`'s job, and mixing them makes both unreadable. |
 | Asking what `git log` would have told you | Investigate first, interview second. |
+| Reading the parent repo, a sibling project, or `~/.claude` / `~/.codex` | They describe other software, or the user. The manual ends up about the wrong thing. |
+| Taking `git rev-parse --show-toplevel` as the project root | It walks *up*. In a nested project it hands you the parent. Compare it to `pwd` and ask. |
